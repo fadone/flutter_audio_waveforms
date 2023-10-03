@@ -19,7 +19,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required this.cursor,
     required this.cursorWidth,
     required this.cursorColor,
-    this.highlightedDurations,
+    super.highlightedDurations,
     this.maxDuration,
     required super.samples,
     required this.highlightDurationColor,
@@ -28,6 +28,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     super.selectedDuration,
     this.onSelectedDurationChanged,
     required this.selectedDurationColor,
+    this.onPanUpdate,
   });
 
   /// BuildContext
@@ -44,9 +45,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
 
   /// Cursor color
   final Color cursorColor;
-
-  /// Highlighted Durations
-  final List<Map<String, Duration>>? highlightedDurations;
 
   /// Max Duration
   final Duration? maxDuration;
@@ -66,16 +64,11 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   /// on Selected Duration Index Changed
   final Function(int index)? onSelectedDurationChanged;
 
+  /// onPanUpdate
+  final Function(Duration duration, int index, String type)? onPanUpdate;
+
   void _onTapDown(TapDownDetails details) {
-    final dx = details.localPosition.dx;
-    final index = (dx / sampleWidth).round();
-
-    final ratio = index / samples.length;
-
-    final duration = Duration(
-      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
-    );
-
+    final duration = _calculateDuration(details.localPosition.dx);
     onTapDown?.call(duration);
   }
 
@@ -86,6 +79,18 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     final durationIndex = (samples.length * durationTimeRatio).round();
 
     return durationIndex * sampleWidth;
+  }
+
+  Duration _calculateDuration(double position) {
+    final index = (position / sampleWidth).round();
+
+    final ratio = index / samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    return duration;
   }
 
   void _highlightDuration(
@@ -122,6 +127,11 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
           height: size.height,
         ),
         Paint()..color = startHighlightColor,
+        onPanUpdate: (details) {
+          final duration = _calculateDuration(startIndex + details.delta.dx);
+
+          onPanUpdate?.call(duration, index, 'start');
+        },
       )
       ..drawRect(
         Rect.fromCenter(
@@ -130,6 +140,11 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
           height: size.height,
         ),
         Paint()..color = endHighlightColor,
+        onPanUpdate: (details) {
+          final duration = _calculateDuration(endIndex + details.delta.dx);
+
+          onPanUpdate?.call(duration, index, 'end');
+        },
       );
   }
 

@@ -59,6 +59,7 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
     this.borderWidth = 0.0,
     this.borderColor = opaqueBlack,
     this.selectedDuration,
+    this.highlightedDurations,
   }) : super(
           samples: samples, //samples,
           color: color,
@@ -80,6 +81,9 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
   /// Selected Duration Index
   final int? selectedDuration;
 
+  /// Highlighted Durations
+  final List<Map<String, Duration>>? highlightedDurations;
+
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(covariant ActiveWaveformPainter oldDelegate) {
     return !checkforSamplesEquality(activeSamples, oldDelegate.activeSamples) ||
@@ -90,6 +94,7 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
         style != oldDelegate.style ||
         borderWidth != oldDelegate.borderWidth ||
         selectedDuration != oldDelegate.selectedDuration ||
+        highlightedDurations != oldDelegate.highlightedDurations ||
         borderColor != oldDelegate.borderColor;
   }
 

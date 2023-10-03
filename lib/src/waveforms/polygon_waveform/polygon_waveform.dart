@@ -47,6 +47,7 @@ class PolygonWaveform extends AudioWaveform {
     this.endHighlightColor = Colors.red,
     this.selectedDurationColor = Colors.red,
     this.onSelectedDurationChanged,
+    this.onPanUpdate,
   });
 
   /// active waveform color
@@ -94,6 +95,9 @@ class PolygonWaveform extends AudioWaveform {
   /// Selected Duration Changed
   final Function(int? index)? onSelectedDurationChanged;
 
+  /// onPanUpdate
+  final Function(Duration duration, int index, String type)? onPanUpdate;
+
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
 }
@@ -140,6 +144,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             gesturesToOverride: const [
               GestureType.onTapDown,
               GestureType.onDoubleTapDown,
+              GestureType.onPanUpdate,
             ],
             builder: (context) {
               return CustomPaint(
@@ -166,6 +171,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   selectedDurationColor: widget.selectedDurationColor,
                   selectedDuration: _selectedDuration,
                   onSelectedDurationChanged: _onSelectedDurationChanged,
+                  onPanUpdate: widget.onPanUpdate,
                 ),
               );
             },
