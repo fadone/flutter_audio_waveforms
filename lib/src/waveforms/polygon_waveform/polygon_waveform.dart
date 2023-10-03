@@ -45,6 +45,8 @@ class PolygonWaveform extends AudioWaveform {
     this.highlightDurationColor = Colors.grey,
     this.startHighlightColor = Colors.blue,
     this.endHighlightColor = Colors.red,
+    this.selectedDurationColor = Colors.red,
+    this.onSelectedDurationChanged,
   });
 
   /// active waveform color
@@ -86,11 +88,26 @@ class PolygonWaveform extends AudioWaveform {
   /// Start Highlight Duration color
   final Color endHighlightColor;
 
+  /// Selected Duration color
+  final Color selectedDurationColor;
+
+  /// Selected Duration Changed
+  final Function(int? index)? onSelectedDurationChanged;
+
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
 }
 
 class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
+  int? _selectedDuration;
+
+  void _onSelectedDurationChanged(int index) {
+    setState(() {
+      _selectedDuration = _selectedDuration != index ? index : null;
+      widget.onSelectedDurationChanged?.call(_selectedDuration);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.samples.isEmpty) {
@@ -120,7 +137,10 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
         ),
         if (showActiveWaveform)
           CanvasTouchDetector(
-            gesturesToOverride: const [GestureType.onTapDown],
+            gesturesToOverride: const [
+              GestureType.onTapDown,
+              GestureType.onDoubleTapDown,
+            ],
             builder: (context) {
               return CustomPaint(
                 isComplex: true,
@@ -143,6 +163,9 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   highlightDurationColor: widget.highlightDurationColor,
                   startHighlightColor: widget.startHighlightColor,
                   endHighlightColor: widget.endHighlightColor,
+                  selectedDurationColor: widget.selectedDurationColor,
+                  selectedDuration: _selectedDuration,
+                  onSelectedDurationChanged: _onSelectedDurationChanged,
                 ),
               );
             },

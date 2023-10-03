@@ -11,7 +11,9 @@ dependencies:
   collection: ^1.15.0
   flutter:
     sdk: flutter
-  touchable: ^1.0.2
+  # touchable: ^1.0.2
+  touchable:
+    path: ../touchable/
 
 dev_dependencies:
   flutter_test:
