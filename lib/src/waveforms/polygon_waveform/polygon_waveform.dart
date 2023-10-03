@@ -38,6 +38,9 @@ class PolygonWaveform extends AudioWaveform {
     super.absolute = false,
     super.invert = false,
     this.onTapDown,
+    this.cursor = false,
+    this.cursorWidth = 2.0,
+    this.cursorColor = Colors.yellow,
   });
 
   /// active waveform color
@@ -57,6 +60,15 @@ class PolygonWaveform extends AudioWaveform {
 
   /// onTapDown which receives duration
   final Function(Duration duration)? onTapDown;
+
+  /// Whether to show cursor or not
+  final bool cursor;
+
+  /// Cursor width
+  final double cursorWidth;
+
+  /// Cursor color
+  final Color cursorColor;
 
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
@@ -119,6 +131,9 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   sampleWidth: sampleWidth,
                   context: context,
                   onTapDown: _onTapDown,
+                  cursor: widget.cursor,
+                  cursorWidth: widget.cursorWidth,
+                  cursorColor: widget.cursorColor,
                 ),
               );
             },

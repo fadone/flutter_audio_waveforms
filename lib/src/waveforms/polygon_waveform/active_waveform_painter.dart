@@ -16,6 +16,9 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required super.sampleWidth,
     required this.context,
     this.onTapDown,
+    required this.cursor,
+    required this.cursorWidth,
+    required this.cursorColor,
   });
 
   /// BuildContext
@@ -24,39 +27,63 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   /// onTap Function
   final Function(TapDownDetails details)? onTapDown;
 
+  /// Whether to show cursor or not
+  final bool cursor;
+
+  /// Cursor width
+  final double cursorWidth;
+
+  /// Cursor color
+  final Color cursorColor;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final continousActivePaint = Paint()
-      ..style = style
-      ..color = color
-      ..shader = gradient?.createShader(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-      );
+    if (!cursor) {
+      final continousActivePaint = Paint()
+        ..style = style
+        ..color = color
+        ..shader = gradient?.createShader(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+        );
 
-    final path = Path();
-    final isStroked = style == PaintingStyle.stroke;
+      final path = Path();
+      final isStroked = style == PaintingStyle.stroke;
 
-    for (var i = 0; i < activeSamples.length; i++) {
-      final x = sampleWidth * i;
-      final y = activeSamples[i];
-      if (isStroked) {
-        path.lineTo(x, y);
-      } else {
-        if (i == activeSamples.length - 1) {
-          path.lineTo(x, 0);
-        } else {
+      for (var i = 0; i < activeSamples.length; i++) {
+        final x = sampleWidth * i;
+        final y = activeSamples[i];
+        if (isStroked) {
           path.lineTo(x, y);
+        } else {
+          if (i == activeSamples.length - 1) {
+            path.lineTo(x, 0);
+          } else {
+            path.lineTo(x, y);
+          }
         }
       }
+
+      //Gets the [alignPosition] depending on [waveformAlignment]
+      final alignPosition = waveformAlignment.getAlignPosition(size.height);
+
+      //Shifts the path along y-axis by amount of [alignPosition]
+      final shiftedPath = path.shift(Offset(0, alignPosition));
+
+      canvas.drawPath(shiftedPath, continousActivePaint);
+    } else {
+      final centerX = sampleWidth * (activeSamples.length - 1);
+
+      final alignPosition = waveformAlignment.getAlignPosition(size.height);
+
+      TouchyCanvas(context, canvas).drawRect(
+        Rect.fromCenter(
+          center: Offset(centerX, alignPosition),
+          width: cursorWidth,
+          height: size.height,
+        ),
+        Paint()..color = cursorColor,
+      );
     }
-
-    //Gets the [alignPosition] depending on [waveformAlignment]
-    final alignPosition = waveformAlignment.getAlignPosition(size.height);
-
-    //Shifts the path along y-axis by amount of [alignPosition]
-    final shiftedPath = path.shift(Offset(0, alignPosition));
-
-    canvas.drawPath(shiftedPath, continousActivePaint);
 
     TouchyCanvas(context, canvas).drawRect(
       Rect.fromCenter(
