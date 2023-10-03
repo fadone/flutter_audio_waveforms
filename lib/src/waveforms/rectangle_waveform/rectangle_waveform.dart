@@ -125,6 +125,7 @@ class _RectangleWaveformState extends AudioWaveformState<RectangleWaveform> {
               sampleWidth: sampleWidth,
               isRoundedRectangle: widget.isRoundedRectangle,
               isCentered: widget.isCentered,
+              samples: widget.samples,
             ),
           ),
       ],

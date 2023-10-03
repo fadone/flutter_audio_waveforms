@@ -19,13 +19,19 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required this.cursor,
     required this.cursorWidth,
     required this.cursorColor,
+    this.highlightedDurations,
+    this.maxDuration,
+    required super.samples,
+    required this.highlightDurationColor,
+    required this.startHighlightColor,
+    required this.endHighlightColor,
   });
 
   /// BuildContext
   final BuildContext context;
 
   /// onTap Function
-  final Function(TapDownDetails details)? onTapDown;
+  final Function(Duration duration)? onTapDown;
 
   /// Whether to show cursor or not
   final bool cursor;
@@ -36,8 +42,92 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   /// Cursor color
   final Color cursorColor;
 
+  /// Highlighted Durations
+  final List<Map<String, Duration>>? highlightedDurations;
+
+  /// Max Duration
+  final Duration? maxDuration;
+
+  /// Highlight Duration color
+  final Color highlightDurationColor;
+
+  /// Start Highlight Duration color
+  final Color startHighlightColor;
+
+  /// Start Highlight Duration color
+  final Color endHighlightColor;
+
+  void _onTapDown(TapDownDetails details) {
+    final dx = details.localPosition.dx;
+    final index = (dx / sampleWidth).round();
+
+    final ratio = index / samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    onTapDown?.call(duration);
+  }
+
+  double _getIndex(Duration duration) {
+    final durationTimeRatio =
+        duration.inMilliseconds / maxDuration!.inMilliseconds;
+
+    final durationIndex = (samples.length * durationTimeRatio).round();
+
+    return durationIndex * sampleWidth;
+  }
+
+  void _highlightDuration(
+    Map<String, Duration> duration,
+    int index,
+    TouchyCanvas touchyCanvas,
+    Size size,
+  ) {
+    final startIndex = _getIndex(duration['start']!);
+    final endIndex = _getIndex(duration['end']!);
+
+    final alignPosition = waveformAlignment.getAlignPosition(size.height);
+
+    touchyCanvas
+      ..drawRect(
+        Rect.fromLTWH(
+          startIndex,
+          0,
+          endIndex - startIndex,
+          size.height,
+        ),
+        Paint()..color = highlightDurationColor.withOpacity(0.3),
+      )
+      ..drawRect(
+        Rect.fromCenter(
+          center: Offset(startIndex, alignPosition),
+          width: cursorWidth,
+          height: size.height,
+        ),
+        Paint()..color = startHighlightColor,
+      )
+      ..drawRect(
+        Rect.fromCenter(
+          center: Offset(endIndex, alignPosition),
+          width: cursorWidth,
+          height: size.height,
+        ),
+        Paint()..color = endHighlightColor,
+      );
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
+    final touchyCanvas = TouchyCanvas(context, canvas);
+
+    if (highlightedDurations != null) {
+      for (var i = 0; i < highlightedDurations!.length; i++) {
+        _highlightDuration(highlightedDurations![i], i, touchyCanvas, size);
+      }
+    }
+
     if (!cursor) {
       final continousActivePaint = Paint()
         ..style = style
@@ -75,7 +165,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
 
       final alignPosition = waveformAlignment.getAlignPosition(size.height);
 
-      TouchyCanvas(context, canvas).drawRect(
+      touchyCanvas.drawRect(
         Rect.fromCenter(
           center: Offset(centerX, alignPosition),
           width: cursorWidth,
@@ -85,14 +175,14 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
       );
     }
 
-    TouchyCanvas(context, canvas).drawRect(
+    touchyCanvas.drawRect(
       Rect.fromCenter(
         center: size.center(Offset.zero),
         width: size.width,
         height: size.height,
       ),
       Paint()..color = Colors.transparent,
-      onTapDown: onTapDown,
+      onTapDown: _onTapDown,
     );
   }
 }

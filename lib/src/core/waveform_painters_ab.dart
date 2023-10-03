@@ -51,7 +51,7 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
     // redundant to check for [samples] equality and to pass them here.
     // Only if ActiveWaveformPainter depends on samples in future for any
     // reasons, then we should pass them here.
-    // required List<double> samples,
+    required List<double> samples,
     required double sampleWidth,
     required this.activeSamples,
     required WaveformAlignment waveformAlignment,
@@ -59,7 +59,7 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
     this.borderWidth = 0.0,
     this.borderColor = opaqueBlack,
   }) : super(
-          samples: [], //samples,
+          samples: samples, //samples,
           color: color,
           gradient: gradient,
           waveformAlignment: waveformAlignment,

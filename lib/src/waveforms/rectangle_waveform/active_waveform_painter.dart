@@ -19,6 +19,7 @@ class RectangleActiveWaveformPainter extends ActiveWaveformPainter {
     required this.isCentered,
     super.gradient,
     super.style = PaintingStyle.fill,
+    required super.samples,
   });
   final bool isRoundedRectangle;
   final bool isCentered;

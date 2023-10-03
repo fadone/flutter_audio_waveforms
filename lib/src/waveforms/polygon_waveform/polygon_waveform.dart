@@ -41,6 +41,10 @@ class PolygonWaveform extends AudioWaveform {
     this.cursor = false,
     this.cursorWidth = 2.0,
     this.cursorColor = Colors.yellow,
+    this.highlightedDurations,
+    this.highlightDurationColor = Colors.grey,
+    this.startHighlightColor = Colors.blue,
+    this.endHighlightColor = Colors.red,
   });
 
   /// active waveform color
@@ -70,24 +74,23 @@ class PolygonWaveform extends AudioWaveform {
   /// Cursor color
   final Color cursorColor;
 
+  /// Highlight Duration color
+  final Color highlightDurationColor;
+
+  /// Highlighted Durations
+  final List<Map<String, Duration>>? highlightedDurations;
+
+  /// Start Highlight Duration color
+  final Color startHighlightColor;
+
+  /// Start Highlight Duration color
+  final Color endHighlightColor;
+
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
 }
 
 class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
-  void _onTapDown(TapDownDetails details) {
-    final dx = details.localPosition.dx;
-    final index = (dx / sampleWidth).round();
-
-    final ratio = index / widget.samples.length;
-
-    final duration = Duration(
-      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
-    );
-
-    widget.onTapDown?.call(duration);
-  }
-
   @override
   Widget build(BuildContext context) {
     if (widget.samples.isEmpty) {
@@ -130,10 +133,16 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   waveformAlignment: waveformAlignment,
                   sampleWidth: sampleWidth,
                   context: context,
-                  onTapDown: _onTapDown,
+                  onTapDown: widget.onTapDown,
                   cursor: widget.cursor,
                   cursorWidth: widget.cursorWidth,
                   cursorColor: widget.cursorColor,
+                  maxDuration: maxDuration,
+                  samples: widget.samples,
+                  highlightedDurations: widget.highlightedDurations,
+                  highlightDurationColor: widget.highlightDurationColor,
+                  startHighlightColor: widget.startHighlightColor,
+                  endHighlightColor: widget.endHighlightColor,
                 ),
               );
             },
