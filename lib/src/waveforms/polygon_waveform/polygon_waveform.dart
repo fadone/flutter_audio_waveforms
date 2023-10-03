@@ -3,6 +3,7 @@ import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:flutter_audio_waveforms/src/core/audio_waveform.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/active_waveform_painter.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/inactive_waveform_painter.dart';
+import 'package:touchable/touchable.dart';
 
 /// [PolygonWaveform] paints the standard waveform that is used for audio
 /// waveforms, a sharp continuous line joining the points of a waveform.
@@ -36,6 +37,7 @@ class PolygonWaveform extends AudioWaveform {
     super.showActiveWaveform = true,
     super.absolute = false,
     super.invert = false,
+    this.onTapDown,
   });
 
   /// active waveform color
@@ -53,11 +55,27 @@ class PolygonWaveform extends AudioWaveform {
   /// waveform style
   final PaintingStyle style;
 
+  /// onTapDown which receives duration
+  final Function(Duration duration)? onTapDown;
+
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
 }
 
 class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
+  void _onTapDown(TapDownDetails details) {
+    final dx = details.localPosition.dx;
+    final index = (dx / sampleWidth).round();
+
+    final ratio = index / widget.samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    widget.onTapDown?.call(duration);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.samples.isEmpty) {
@@ -86,17 +104,24 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
           ),
         ),
         if (showActiveWaveform)
-          CustomPaint(
-            isComplex: true,
-            size: Size(widget.width, widget.height),
-            painter: PolygonActiveWaveformPainter(
-              style: widget.style,
-              color: widget.activeColor,
-              activeSamples: activeSamples,
-              gradient: widget.activeGradient,
-              waveformAlignment: waveformAlignment,
-              sampleWidth: sampleWidth,
-            ),
+          CanvasTouchDetector(
+            gesturesToOverride: const [GestureType.onTapDown],
+            builder: (context) {
+              return CustomPaint(
+                isComplex: true,
+                size: Size(widget.width, widget.height),
+                painter: PolygonActiveWaveformPainter(
+                  style: widget.style,
+                  color: widget.activeColor,
+                  activeSamples: activeSamples,
+                  gradient: widget.activeGradient,
+                  waveformAlignment: waveformAlignment,
+                  sampleWidth: sampleWidth,
+                  context: context,
+                  onTapDown: _onTapDown,
+                ),
+              );
+            },
           ),
       ],
     );
