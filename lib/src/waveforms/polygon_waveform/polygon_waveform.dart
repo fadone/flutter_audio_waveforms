@@ -47,7 +47,7 @@ class PolygonWaveform extends AudioWaveform {
     this.endHighlightColor = Colors.red,
     this.selectedDurationColor = Colors.red,
     this.onSelectedDurationChanged,
-    this.onPanUpdate,
+    this.onHighlightedDurationChanged,
   });
 
   /// active waveform color
@@ -95,8 +95,9 @@ class PolygonWaveform extends AudioWaveform {
   /// Selected Duration Changed
   final Function(int? index)? onSelectedDurationChanged;
 
-  /// onPanUpdate
-  final Function(Duration duration, int index, String type)? onPanUpdate;
+  /// onHighlightedDurationChanged
+  final Function(int index, Map<String, Duration> duration)?
+      onHighlightedDurationChanged;
 
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
@@ -112,6 +113,71 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     });
   }
 
+  double _getIndex(Duration duration) {
+    if (maxDuration == null) {
+      return 0;
+    }
+    final durationTimeRatio =
+        duration.inMilliseconds / maxDuration!.inMilliseconds;
+
+    final durationIndex = (widget.samples.length * durationTimeRatio).round();
+
+    return durationIndex * sampleWidth;
+  }
+
+  Duration _calculateDuration(double position) {
+    final index = (position / sampleWidth).round();
+
+    final ratio = index / widget.samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    return duration;
+  }
+
+  List<Handle> get _handlers {
+    final handlers = <Handle>[];
+    for (var i = 0; i < widget.highlightedDurations!.length; i++) {
+      final duration = widget.highlightedDurations![i];
+
+      final startPostion = _getIndex(duration['start']!);
+      final endPostion = _getIndex(duration['end']!);
+      handlers
+        ..add(
+          Handle(
+            position: startPostion,
+            cursorWidth: widget.cursorWidth,
+            height: widget.height,
+            color: Colors.blue,
+            onPositionChanged: (position) {
+              setState(() {
+                duration['start'] = _calculateDuration(position);
+                widget.onHighlightedDurationChanged?.call(i, duration);
+              });
+            },
+          ),
+        )
+        ..add(
+          Handle(
+            position: endPostion,
+            cursorWidth: widget.cursorWidth,
+            height: widget.height,
+            color: Colors.red,
+            onPositionChanged: (position) {
+              setState(() {
+                duration['end'] = _calculateDuration(position);
+                widget.onHighlightedDurationChanged?.call(i, duration);
+              });
+            },
+          ),
+        );
+    }
+
+    return handlers;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.samples.isEmpty) {
@@ -122,6 +188,8 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     final showActiveWaveform = this.showActiveWaveform;
     final waveformAlignment = this.waveformAlignment;
     final sampleWidth = this.sampleWidth;
+
+    // final index = _getIndex(const Duration(seconds: 1));
 
     return Stack(
       children: [
@@ -171,12 +239,64 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   selectedDurationColor: widget.selectedDurationColor,
                   selectedDuration: _selectedDuration,
                   onSelectedDurationChanged: _onSelectedDurationChanged,
-                  onPanUpdate: widget.onPanUpdate,
+                  // onPanUpdate: widget.onPanUpdate,
                 ),
               );
             },
           ),
+        ..._handlers,
       ],
+    );
+  }
+}
+
+class Handle extends StatefulWidget {
+  const Handle({
+    super.key,
+    required this.position,
+    required this.cursorWidth,
+    required this.height,
+    required this.color,
+    required this.onPositionChanged,
+  });
+
+  final double position;
+  final double cursorWidth;
+  final double height;
+  final Color color;
+  final Function(double position) onPositionChanged;
+
+  @override
+  State<Handle> createState() => _HandleState();
+}
+
+class _HandleState extends State<Handle> {
+  var _left = 0.0;
+
+  @override
+  void initState() {
+    _left = widget.position;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: _left,
+      top: 0,
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          setState(() {
+            _left += details.delta.dx;
+            widget.onPositionChanged(_left);
+          });
+        },
+        child: Container(
+          color: widget.color,
+          width: widget.cursorWidth,
+          height: widget.height,
+        ),
+      ),
     );
   }
 }

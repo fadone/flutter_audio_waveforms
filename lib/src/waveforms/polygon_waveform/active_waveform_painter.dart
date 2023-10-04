@@ -102,50 +102,21 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     final startIndex = _getIndex(duration['start']!);
     final endIndex = _getIndex(duration['end']!);
 
-    final alignPosition = waveformAlignment.getAlignPosition(size.height);
-
-    touchyCanvas
-      ..drawRect(
-        Rect.fromLTWH(
-          startIndex,
-          0,
-          endIndex - startIndex,
-          size.height,
-        ),
-        Paint()
-          ..color = selectedDuration == index
-              ? selectedDurationColor.withOpacity(0.3)
-              : highlightDurationColor.withOpacity(0.3),
-        onDoubleTapDown: (details) {
-          onSelectedDurationChanged?.call(index);
-        },
-      )
-      ..drawRect(
-        Rect.fromCenter(
-          center: Offset(startIndex, alignPosition),
-          width: cursorWidth,
-          height: size.height,
-        ),
-        Paint()..color = startHighlightColor,
-        onPanUpdate: (details) {
-          final duration = _calculateDuration(startIndex + details.delta.dx);
-
-          onPanUpdate?.call(duration, index, 'start');
-        },
-      )
-      ..drawRect(
-        Rect.fromCenter(
-          center: Offset(endIndex, alignPosition),
-          width: cursorWidth,
-          height: size.height,
-        ),
-        Paint()..color = endHighlightColor,
-        onPanUpdate: (details) {
-          final duration = _calculateDuration(endIndex + details.delta.dx);
-
-          onPanUpdate?.call(duration, index, 'end');
-        },
-      );
+    touchyCanvas.drawRect(
+      Rect.fromLTWH(
+        startIndex,
+        0,
+        endIndex - startIndex,
+        size.height,
+      ),
+      Paint()
+        ..color = selectedDuration == index
+            ? selectedDurationColor.withOpacity(0.3)
+            : highlightDurationColor.withOpacity(0.3),
+      onDoubleTapDown: (details) {
+        onSelectedDurationChanged?.call(index);
+      },
+    );
   }
 
   void _drawPath(Canvas canvas, Size size) {
