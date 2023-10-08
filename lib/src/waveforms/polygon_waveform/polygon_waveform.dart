@@ -137,14 +137,14 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     return duration;
   }
 
-  List<Handle> get _handlers {
-    final handlers = <Handle>[];
+  List<Handle> get _handles {
+    final handles = <Handle>[];
     for (var i = 0; i < widget.highlightedDurations!.length; i++) {
       final duration = widget.highlightedDurations![i];
 
       final startPostion = _getIndex(duration['start']!);
       final endPostion = _getIndex(duration['end']!);
-      handlers
+      handles
         ..add(
           Handle(
             position: startPostion,
@@ -175,7 +175,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
         );
     }
 
-    return handlers;
+    return handles;
   }
 
   @override
@@ -244,7 +244,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
               );
             },
           ),
-        ..._handlers,
+        ..._handles,
       ],
     );
   }
