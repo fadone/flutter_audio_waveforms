@@ -27,6 +27,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required this.endHighlightColor,
     super.selectedDuration,
     this.onSelectedDurationChanged,
+    required this.selectedHighlightColor,
     required this.selectedDurationColor,
     this.onPanUpdate,
   });
@@ -59,6 +60,9 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   final Color endHighlightColor;
 
   /// Selected Duration Color
+  final Color selectedHighlightColor;
+
+  /// Selected Duration color
   final Color selectedDurationColor;
 
   /// on Selected Duration Index Changed
@@ -72,13 +76,13 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     onTapDown?.call(duration);
   }
 
-  double _getIndex(Duration duration) {
+  int _getIndex(Duration duration) {
     final durationTimeRatio =
         duration.inMilliseconds / maxDuration!.inMilliseconds;
 
     final durationIndex = (samples.length * durationTimeRatio).round();
 
-    return durationIndex * sampleWidth;
+    return durationIndex;
   }
 
   Duration _calculateDuration(double position) {
@@ -99,8 +103,8 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     TouchyCanvas touchyCanvas,
     Size size,
   ) {
-    final startIndex = _getIndex(duration['start']!);
-    final endIndex = _getIndex(duration['end']!);
+    final startIndex = _getIndex(duration['start']!) * sampleWidth;
+    final endIndex = _getIndex(duration['end']!) * sampleWidth;
 
     touchyCanvas.drawRect(
       Rect.fromLTWH(
@@ -111,7 +115,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
       ),
       Paint()
         ..color = selectedDuration == index
-            ? selectedDurationColor.withOpacity(0.3)
+            ? selectedHighlightColor.withOpacity(0.3)
             : highlightDurationColor.withOpacity(0.3),
       onDoubleTapDown: (details) {
         onSelectedDurationChanged?.call(index);
@@ -153,6 +157,45 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     canvas.drawPath(shiftedPath, continousActivePaint);
   }
 
+  void _drawSelectedPath(Canvas canvas, Size size) {
+    // final start = highlightedDurations![selectedDuration!]['start']!;
+    // final end = highlightedDurations![selectedDuration!]['end']!;
+    final startIndex =
+        _getIndex(highlightedDurations![selectedDuration!]['start']!);
+    final endIndex =
+        _getIndex(highlightedDurations![selectedDuration!]['end']!);
+
+    final paint = Paint()
+      ..style = style
+      ..color = selectedDurationColor
+      ..shader = gradient?.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      );
+
+    // final path = Path()..moveTo(samples[startIndex], 0);
+    // final path = Path().shift(Offset(startIndex * sampleWidth, 0));
+    final path = Path()..moveTo(startIndex * sampleWidth, 0);
+
+    for (var i = startIndex; i < endIndex; i++) {
+      final x = sampleWidth * i;
+      final y = samples[i];
+
+      if (i == samples.length - 1) {
+        path.lineTo(x, 0);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+
+    //Gets the [alignPosition] depending on [waveformAlignment]
+    final alignPosition = waveformAlignment.getAlignPosition(size.height);
+
+    //Shifts the path along y-axis by amount of [alignPosition]
+    final shiftedPath = path.shift(Offset(0, alignPosition));
+
+    canvas.drawPath(shiftedPath, paint);
+  }
+
   void _drawCursor(TouchyCanvas touchyCanvas, Size size) {
     final centerX = sampleWidth * (activeSamples.length - 1);
 
@@ -182,6 +225,10 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
       _drawPath(canvas, size);
     } else {
       _drawCursor(touchyCanvas, size);
+    }
+
+    if (selectedDuration != null) {
+      _drawSelectedPath(canvas, size);
     }
 
     touchyCanvas.drawRect(

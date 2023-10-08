@@ -45,7 +45,8 @@ class PolygonWaveform extends AudioWaveform {
     this.highlightDurationColor = Colors.grey,
     this.startHighlightColor = Colors.blue,
     this.endHighlightColor = Colors.red,
-    this.selectedDurationColor = Colors.red,
+    this.selectedHighlightColor = Colors.red,
+    this.selectedDurationColor = Colors.white,
     this.onSelectedDurationChanged,
     this.onHighlightedDurationChanged,
   });
@@ -88,6 +89,9 @@ class PolygonWaveform extends AudioWaveform {
 
   /// Start Highlight Duration color
   final Color endHighlightColor;
+
+  /// Selected Highlight color
+  final Color selectedHighlightColor;
 
   /// Selected Duration color
   final Color selectedDurationColor;
@@ -189,8 +193,6 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     final waveformAlignment = this.waveformAlignment;
     final sampleWidth = this.sampleWidth;
 
-    // final index = _getIndex(const Duration(seconds: 1));
-
     return Stack(
       children: [
         RepaintBoundary(
@@ -231,11 +233,12 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   cursorWidth: widget.cursorWidth,
                   cursorColor: widget.cursorColor,
                   maxDuration: maxDuration,
-                  samples: widget.samples,
+                  samples: processedSamples,
                   highlightedDurations: widget.highlightedDurations,
                   highlightDurationColor: widget.highlightDurationColor,
                   startHighlightColor: widget.startHighlightColor,
                   endHighlightColor: widget.endHighlightColor,
+                  selectedHighlightColor: widget.selectedHighlightColor,
                   selectedDurationColor: widget.selectedDurationColor,
                   selectedDuration: _selectedDuration,
                   onSelectedDurationChanged: _onSelectedDurationChanged,

@@ -87,6 +87,7 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(covariant ActiveWaveformPainter oldDelegate) {
     return !checkforSamplesEquality(activeSamples, oldDelegate.activeSamples) ||
+        !checkforSamplesEquality(samples, oldDelegate.samples) ||
         color != oldDelegate.color ||
         gradient != oldDelegate.gradient ||
         waveformAlignment != oldDelegate.waveformAlignment ||
