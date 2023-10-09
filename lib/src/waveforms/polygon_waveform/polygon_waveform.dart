@@ -149,13 +149,13 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     for (var i = 0; i < widget.highlightedDurations!.length; i++) {
       final duration = widget.highlightedDurations![i];
 
-      final startPostion = _getIndex(duration.start);
-      final endPostion = _getIndex(duration.end);
+      final startPosition = _getIndex(duration.start);
+      final endPosition = _getIndex(duration.end);
       handles
         ..add(
           Handle(
-            // key: UniqueKey(),
-            position: startPostion,
+            key: ValueKey('${duration.id}.start'),
+            position: startPosition,
             cursorWidth: widget.cursorWidth,
             height: widget.height,
             color: Colors.blue,
@@ -169,7 +169,8 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
         )
         ..add(
           Handle(
-            position: endPostion,
+            key: ValueKey('${duration.id}.end'),
+            position: endPosition,
             cursorWidth: widget.cursorWidth,
             height: widget.height,
             color: Colors.red,

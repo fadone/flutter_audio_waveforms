@@ -1,11 +1,11 @@
 class DurationSegment {
   DurationSegment({
-    required this.index,
+    required this.id,
     required this.start,
     required this.end,
   });
 
-  int index;
+  String id;
   Duration start;
   Duration end;
 }
