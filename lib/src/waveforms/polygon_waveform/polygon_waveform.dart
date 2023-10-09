@@ -219,7 +219,6 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             gesturesToOverride: const [
               GestureType.onTapDown,
               GestureType.onDoubleTapDown,
-              GestureType.onPanUpdate,
             ],
             builder: (context) {
               return CustomPaint(

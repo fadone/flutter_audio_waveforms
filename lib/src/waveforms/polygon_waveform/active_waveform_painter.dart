@@ -30,7 +30,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     this.onSelectedDurationChanged,
     required this.selectedHighlightColor,
     required this.selectedDurationColor,
-    this.onPanUpdate,
   });
 
   /// BuildContext
@@ -68,9 +67,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
 
   /// on Selected Duration Index Changed
   final Function(int index)? onSelectedDurationChanged;
-
-  /// onPanUpdate
-  final Function(Duration duration, int index, String type)? onPanUpdate;
 
   void _onTapDown(TapDownDetails details) {
     final duration = _calculateDuration(details.localPosition.dx);

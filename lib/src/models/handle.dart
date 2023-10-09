@@ -35,12 +35,18 @@ class _HandleState extends State<Handle> {
       left: _left,
       top: 0,
       child: GestureDetector(
-        onPanUpdate: (details) {
+        onHorizontalDragUpdate: (details) {
           setState(() {
             _left += details.delta.dx;
             widget.onPositionChanged(_left);
           });
         },
+        // onPanUpdate: (details) {
+        //   setState(() {
+        //     _left += details.delta.dx;
+        //     widget.onPositionChanged(_left);
+        //   });
+        // },
         child: Container(
           color: widget.color,
           width: widget.cursorWidth,
