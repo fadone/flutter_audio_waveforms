@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/src/core/waveform_painters_ab.dart';
+import 'package:flutter_audio_waveforms/src/models/duration_segment.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/polygon_waveform.dart';
 import 'package:touchable/touchable.dart';
@@ -98,13 +99,13 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   }
 
   void _highlightDuration(
-    Map<String, Duration> duration,
+    DurationSegment duration,
     int index,
     TouchyCanvas touchyCanvas,
     Size size,
   ) {
-    final startIndex = _getIndex(duration['start']!) * sampleWidth;
-    final endIndex = _getIndex(duration['end']!) * sampleWidth;
+    final startIndex = _getIndex(duration.start) * sampleWidth;
+    final endIndex = _getIndex(duration.end) * sampleWidth;
 
     touchyCanvas.drawRect(
       Rect.fromLTWH(
@@ -158,12 +159,9 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   }
 
   void _drawSelectedPath(Canvas canvas, Size size) {
-    // final start = highlightedDurations![selectedDuration!]['start']!;
-    // final end = highlightedDurations![selectedDuration!]['end']!;
     final startIndex =
-        _getIndex(highlightedDurations![selectedDuration!]['start']!);
-    final endIndex =
-        _getIndex(highlightedDurations![selectedDuration!]['end']!);
+        _getIndex(highlightedDurations![selectedDuration!].start);
+    final endIndex = _getIndex(highlightedDurations![selectedDuration!].end);
 
     final paint = Paint()
       ..style = style
@@ -172,8 +170,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
         Rect.fromLTWH(0, 0, size.width, size.height),
       );
 
-    // final path = Path()..moveTo(samples[startIndex], 0);
-    // final path = Path().shift(Offset(startIndex * sampleWidth, 0));
     final path = Path()..moveTo(startIndex * sampleWidth, 0);
 
     for (var i = startIndex; i < endIndex; i++) {

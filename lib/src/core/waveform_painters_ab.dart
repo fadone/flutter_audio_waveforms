@@ -3,6 +3,8 @@ import 'package:flutter_audio_waveforms/src/const/colors.dart';
 import 'package:flutter_audio_waveforms/src/util/check_samples_equality.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 
+import '../models/duration_segment.dart';
+
 /// A Painter class that all the types of Waveform Painters extend to.
 /// The memebers of this class are essential to paint any type of waveform.
 abstract class WaveformPainter extends CustomPainter {
@@ -82,7 +84,7 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
   final int? selectedDuration;
 
   /// Highlighted Durations
-  final List<Map<String, Duration>>? highlightedDurations;
+  final List<DurationSegment>? highlightedDurations;
 
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(covariant ActiveWaveformPainter oldDelegate) {

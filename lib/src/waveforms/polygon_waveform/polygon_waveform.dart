@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:flutter_audio_waveforms/src/core/audio_waveform.dart';
+import 'package:flutter_audio_waveforms/src/models/duration_segment.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/active_waveform_painter.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/inactive_waveform_painter.dart';
 import 'package:touchable/touchable.dart';
+
+import '../../models/handle.dart';
 
 /// [PolygonWaveform] paints the standard waveform that is used for audio
 /// waveforms, a sharp continuous line joining the points of a waveform.
@@ -82,7 +85,7 @@ class PolygonWaveform extends AudioWaveform {
   final Color highlightDurationColor;
 
   /// Highlighted Durations
-  final List<Map<String, Duration>>? highlightedDurations;
+  final List<DurationSegment>? highlightedDurations;
 
   /// Start Highlight Duration color
   final Color startHighlightColor;
@@ -100,7 +103,7 @@ class PolygonWaveform extends AudioWaveform {
   final Function(int? index)? onSelectedDurationChanged;
 
   /// onHighlightedDurationChanged
-  final Function(int index, Map<String, Duration> duration)?
+  final Function(int index, DurationSegment duration)?
       onHighlightedDurationChanged;
 
   @override
@@ -146,18 +149,19 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     for (var i = 0; i < widget.highlightedDurations!.length; i++) {
       final duration = widget.highlightedDurations![i];
 
-      final startPostion = _getIndex(duration['start']!);
-      final endPostion = _getIndex(duration['end']!);
+      final startPostion = _getIndex(duration.start);
+      final endPostion = _getIndex(duration.end);
       handles
         ..add(
           Handle(
+            // key: UniqueKey(),
             position: startPostion,
             cursorWidth: widget.cursorWidth,
             height: widget.height,
             color: Colors.blue,
             onPositionChanged: (position) {
               setState(() {
-                duration['start'] = _calculateDuration(position);
+                duration.start = _calculateDuration(position);
                 widget.onHighlightedDurationChanged?.call(i, duration);
               });
             },
@@ -171,7 +175,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             color: Colors.red,
             onPositionChanged: (position) {
               setState(() {
-                duration['end'] = _calculateDuration(position);
+                duration.end = _calculateDuration(position);
                 widget.onHighlightedDurationChanged?.call(i, duration);
               });
             },
@@ -242,64 +246,12 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   selectedDurationColor: widget.selectedDurationColor,
                   selectedDuration: _selectedDuration,
                   onSelectedDurationChanged: _onSelectedDurationChanged,
-                  // onPanUpdate: widget.onPanUpdate,
                 ),
               );
             },
           ),
         ..._handles,
       ],
-    );
-  }
-}
-
-class Handle extends StatefulWidget {
-  const Handle({
-    super.key,
-    required this.position,
-    required this.cursorWidth,
-    required this.height,
-    required this.color,
-    required this.onPositionChanged,
-  });
-
-  final double position;
-  final double cursorWidth;
-  final double height;
-  final Color color;
-  final Function(double position) onPositionChanged;
-
-  @override
-  State<Handle> createState() => _HandleState();
-}
-
-class _HandleState extends State<Handle> {
-  var _left = 0.0;
-
-  @override
-  void initState() {
-    _left = widget.position;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: _left,
-      top: 0,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          setState(() {
-            _left += details.delta.dx;
-            widget.onPositionChanged(_left);
-          });
-        },
-        child: Container(
-          color: widget.color,
-          width: widget.cursorWidth,
-          height: widget.height,
-        ),
-      ),
     );
   }
 }
