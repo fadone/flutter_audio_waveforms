@@ -8,12 +8,14 @@ class Handle extends StatefulWidget {
     required this.height,
     required this.color,
     required this.onPositionChanged,
+    required this.showHead,
   });
 
   final double position;
   final double cursorWidth;
   final double height;
   final Color color;
+  final bool showHead;
   final Function(double position) onPositionChanged;
 
   @override
@@ -32,25 +34,35 @@ class _HandleState extends State<Handle> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: _left,
+      left: _left - widget.cursorWidth,
       top: 0,
       child: GestureDetector(
-        onHorizontalDragUpdate: (details) {
-          setState(() {
-            _left += details.delta.dx;
-            widget.onPositionChanged(_left);
-          });
-        },
-        // onPanUpdate: (details) {
-        //   setState(() {
-        //     _left += details.delta.dx;
-        //     widget.onPositionChanged(_left);
-        //   });
-        // },
-        child: Container(
-          color: widget.color,
-          width: widget.cursorWidth,
-          height: widget.height,
+        onHorizontalDragUpdate: widget.showHead
+            ? (details) {
+                setState(() {
+                  _left += details.delta.dx;
+                  widget.onPositionChanged(_left);
+                });
+              }
+            : null,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              color: widget.color,
+              width: widget.cursorWidth,
+              height: widget.height * 0.7,
+            ),
+            if (widget.showHead)
+              Container(
+                width: widget.cursorWidth * 3,
+                height: widget.cursorWidth * 3,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+          ],
         ),
       ),
     );

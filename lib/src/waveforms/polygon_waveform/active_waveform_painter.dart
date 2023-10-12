@@ -207,16 +207,23 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   void paint(Canvas canvas, Size size) {
     final touchyCanvas = TouchyCanvas(context, canvas);
 
+    final newSize = Size(size.width, size.height * 0.7);
+
     if (highlightedDurations != null) {
       for (var i = 0; i < highlightedDurations!.length; i++) {
-        _highlightDuration(highlightedDurations![i], i, touchyCanvas, size);
+        _highlightDuration(
+          highlightedDurations![i],
+          i,
+          touchyCanvas,
+          newSize,
+        );
       }
     }
 
     if (!cursor) {
       _drawPath(canvas, size);
     } else {
-      _drawCursor(touchyCanvas, size);
+      _drawCursor(touchyCanvas, newSize);
     }
 
     if (selectedDuration != null) {
@@ -225,9 +232,9 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
 
     touchyCanvas.drawRect(
       Rect.fromCenter(
-        center: size.center(Offset.zero),
-        width: size.width,
-        height: size.height,
+        center: newSize.center(Offset.zero),
+        width: newSize.width,
+        height: newSize.height,
       ),
       Paint()..color = Colors.transparent,
       hitTestBehavior: HitTestBehavior.translucent,

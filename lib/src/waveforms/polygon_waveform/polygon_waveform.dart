@@ -151,6 +151,12 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
 
       final startPosition = _getIndex(duration.start);
       final endPosition = _getIndex(duration.end);
+
+      var showHead = false;
+      if (_selectedDuration != null && _selectedDuration == i) {
+        showHead = true;
+      }
+
       handles
         ..add(
           Handle(
@@ -165,6 +171,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                 widget.onHighlightedDurationChanged?.call(i, duration);
               });
             },
+            showHead: showHead,
           ),
         )
         ..add(
@@ -180,6 +187,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                 widget.onHighlightedDurationChanged?.call(i, duration);
               });
             },
+            showHead: showHead,
           ),
         );
     }
@@ -200,6 +208,11 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
 
     return Stack(
       children: [
+        Container(
+          width: widget.width,
+          height: widget.height * 0.7,
+          color: Colors.black87,
+        ),
         RepaintBoundary(
           child: CustomPaint(
             size: Size(widget.width, widget.height),
