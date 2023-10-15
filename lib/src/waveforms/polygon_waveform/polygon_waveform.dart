@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
-import 'package:flutter_audio_waveforms/src/core/audio_waveform.dart';
-import 'package:flutter_audio_waveforms/src/models/duration_segment.dart';
+import 'package:flutter_audio_waveforms/src/models/cursor_handle.dart';
+import 'package:flutter_audio_waveforms/src/models/handle.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/active_waveform_painter.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/inactive_waveform_painter.dart';
 import 'package:touchable/touchable.dart';
-
-import '../../models/handle.dart';
 
 /// [PolygonWaveform] paints the standard waveform that is used for audio
 /// waveforms, a sharp continuous line joining the points of a waveform.
@@ -52,6 +50,7 @@ class PolygonWaveform extends AudioWaveform {
     this.selectedDurationColor = Colors.white,
     this.onSelectedDurationChanged,
     this.onHighlightedDurationChanged,
+    this.isPlaying = false,
   });
 
   /// active waveform color
@@ -105,6 +104,8 @@ class PolygonWaveform extends AudioWaveform {
   /// onHighlightedDurationChanged
   final Function(int index, DurationSegment duration)?
       onHighlightedDurationChanged;
+
+  final bool isPlaying;
 
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
@@ -230,7 +231,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
         if (showActiveWaveform)
           CanvasTouchDetector(
             gesturesToOverride: const [
-              GestureType.onTapDown,
+              // GestureType.onTapDown,
               GestureType.onDoubleTapDown,
             ],
             builder: (context) {
@@ -245,10 +246,10 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   waveformAlignment: waveformAlignment,
                   sampleWidth: sampleWidth,
                   context: context,
-                  onTapDown: widget.onTapDown,
-                  cursor: widget.cursor,
-                  cursorWidth: widget.cursorWidth,
-                  cursorColor: widget.cursorColor,
+                  // onTapDown: widget.onTapDown,
+                  // cursor: widget.cursor,
+                  // cursorWidth: widget.cursorWidth,
+                  // cursorColor: widget.cursorColor,
                   maxDuration: maxDuration,
                   samples: processedSamples,
                   highlightedDurations: widget.highlightedDurations,
@@ -264,6 +265,18 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             },
           ),
         ..._handles,
+        CursorHandle(
+          position: activeSamples.length * sampleWidth,
+          cursorWidth: widget.cursorWidth,
+          height: widget.height,
+          color: widget.cursorColor,
+          onPositionChanged: (position) {
+            final duration = _calculateDuration(position);
+            widget.onTapDown?.call(duration);
+          },
+          showHead: true,
+          isPlaying: widget.isPlaying,
+        ),
       ],
     );
   }
