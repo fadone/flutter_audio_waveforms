@@ -208,6 +208,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
     final sampleWidth = this.sampleWidth;
 
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Container(
           width: widget.width,

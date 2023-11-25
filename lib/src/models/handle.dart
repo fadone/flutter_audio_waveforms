@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class Handle extends StatefulWidget {
@@ -33,8 +35,13 @@ class _HandleState extends State<Handle> {
 
   @override
   Widget build(BuildContext context) {
+    var position = max(_left, 0).toDouble();
+    if (widget.showHead) {
+      position -= widget.cursorWidth;
+    }
+
     return Positioned(
-      left: _left - widget.cursorWidth,
+      left: position,
       top: 0,
       child: GestureDetector(
         onHorizontalDragUpdate: widget.showHead
