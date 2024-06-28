@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/src/core/waveform_painters_ab.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/rectangle_waveform/rectangle_waveform.dart';
+import 'package:touchable/touchable.dart';
 
 ///ActiveWaveformPainter for the [RectangleWaveform]
 class RectangleActiveWaveformPainter extends ActiveWaveformPainter {
@@ -19,6 +20,8 @@ class RectangleActiveWaveformPainter extends ActiveWaveformPainter {
     required this.isCentered,
     super.gradient,
     super.style = PaintingStyle.fill,
+    required super.context,
+    super.onTapDown,
   });
   final bool isRoundedRectangle;
   final bool isCentered;
@@ -59,6 +62,16 @@ class RectangleActiveWaveformPainter extends ActiveWaveformPainter {
         isCentered,
       );
     }
+
+    TouchyCanvas(context, canvas).drawRect(
+      Rect.fromCenter(
+        center: size.center(Offset.zero),
+        width: size.width,
+        height: size.height,
+      ),
+      Paint()..color = Colors.transparent,
+      onTapDown: onTapDown,
+    );
   }
 
   // ignore: long-parameter-list

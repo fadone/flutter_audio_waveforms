@@ -58,6 +58,8 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
     PaintingStyle style = PaintingStyle.stroke,
     this.borderWidth = 0.0,
     this.borderColor = opaqueBlack,
+    required this.context,
+    this.onTapDown,
   }) : super(
           samples: [], //samples,
           color: color,
@@ -75,6 +77,10 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
 
   /// Stroke/Border Width
   final Color borderColor;
+
+  final BuildContext context;
+
+  final Function(TapDownDetails details)? onTapDown;
 
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(covariant ActiveWaveformPainter oldDelegate) {
@@ -157,6 +163,8 @@ abstract class ActiveInActiveWaveformPainter extends WaveformPainter {
     required WaveformAlignment waveformAlignment,
     PaintingStyle style = PaintingStyle.stroke,
     required this.strokeWidth,
+    required this.context,
+    this.onTapDown,
   }) : super(
           samples: samples,
           color: inactiveColor,
@@ -177,6 +185,10 @@ abstract class ActiveInActiveWaveformPainter extends WaveformPainter {
 
   /// Stroke Width
   final double strokeWidth;
+
+  final BuildContext context;
+
+  final Function(TapDownDetails details)? onTapDown;
 
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/src/core/waveform_painters_ab.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/polygon_waveform.dart';
+import 'package:touchable/touchable.dart';
 
 ///ActiveWaveformPainter for the [PolygonWaveform]
 class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
@@ -13,6 +14,8 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required super.waveformAlignment,
     required super.style,
     required super.sampleWidth,
+    required super.context,
+    super.onTapDown,
   });
 
   @override
@@ -48,5 +51,15 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     final shiftedPath = path.shift(Offset(0, alignPosition));
 
     canvas.drawPath(shiftedPath, continousActivePaint);
+
+    TouchyCanvas(context, canvas).drawRect(
+      Rect.fromCenter(
+        center: size.center(Offset.zero),
+        width: size.width,
+        height: size.height,
+      ),
+      Paint()..color = Colors.transparent,
+      onTapDown: onTapDown,
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:flutter_audio_waveforms/src/core/audio_waveform.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/active_waveform_painter.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/inactive_waveform_painter.dart';
+import 'package:touchable/touchable.dart';
 
 /// [PolygonWaveform] paints the standard waveform that is used for audio
 /// waveforms, a sharp continuous line joining the points of a waveform.
@@ -36,6 +37,7 @@ class PolygonWaveform extends AudioWaveform {
     super.showActiveWaveform = true,
     super.absolute = false,
     super.invert = false,
+    super.onTapDown,
   });
 
   /// active waveform color
@@ -86,16 +88,21 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
           ),
         ),
         if (showActiveWaveform)
-          CustomPaint(
-            isComplex: true,
-            size: Size(widget.width, widget.height),
-            painter: PolygonActiveWaveformPainter(
-              style: widget.style,
-              color: widget.activeColor,
-              activeSamples: activeSamples,
-              gradient: widget.activeGradient,
-              waveformAlignment: waveformAlignment,
-              sampleWidth: sampleWidth,
+          CanvasTouchDetector(
+            gesturesToOverride: const [GestureType.onTapDown],
+            builder: (context) => CustomPaint(
+              isComplex: true,
+              size: Size(widget.width, widget.height),
+              painter: PolygonActiveWaveformPainter(
+                style: widget.style,
+                color: widget.activeColor,
+                activeSamples: activeSamples,
+                gradient: widget.activeGradient,
+                waveformAlignment: waveformAlignment,
+                sampleWidth: sampleWidth,
+                context: context,
+                onTapDown: onTapDown,
+              ),
             ),
           ),
       ],
