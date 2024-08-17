@@ -1,3 +1,4 @@
+import 'dart:async' show Timer;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ class CursorHandle extends StatefulWidget {
     required this.onPositionChanged,
     required this.showHead,
     required this.isPlaying,
+    this.onHorizontalDragUpdate,
+    this.onDragging,
   });
 
   final double position;
@@ -21,6 +24,8 @@ class CursorHandle extends StatefulWidget {
   final bool showHead;
   final Function(double position) onPositionChanged;
   final bool isPlaying;
+  final Function(DragUpdateDetails details)? onHorizontalDragUpdate;
+  final Function(double position)? onDragging;
 
   @override
   State<CursorHandle> createState() => _CursorHandleState();
@@ -28,6 +33,29 @@ class CursorHandle extends StatefulWidget {
 
 class _CursorHandleState extends State<CursorHandle> {
   var _left = 0.0;
+
+  Timer? _timer;
+  double? _globalPosition;
+
+  // Function to execute repeatedly while dragging
+  void _executeWhileDragging() {
+    print("Dragging...");
+    widget.onDragging?.call(_globalPosition!);
+  }
+
+  // Start the timer to execute the function continuously
+  void _startExecuting() {
+    _timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
+      if (_globalPosition != null) {
+        _executeWhileDragging();
+      }
+    });
+  }
+
+  // Stop the timer when the drag ends
+  void _stopExecuting() {
+    _timer?.cancel();
+  }
 
   @override
   void initState() {
@@ -39,7 +67,7 @@ class _CursorHandleState extends State<CursorHandle> {
   void didUpdateWidget(covariant CursorHandle oldWidget) {
     if (widget.isPlaying) {
       if (widget.position != oldWidget.position) {
-        print('here changed');
+        // print('here changed');
         _left = widget.position;
       }
     }
@@ -57,8 +85,27 @@ class _CursorHandleState extends State<CursorHandle> {
       left: position,
       top: 0,
       child: GestureDetector(
+        // onHorizontalDragDown: (details) {
+        //   print('here onHorizontalDragDown ${details}');
+        // },
+        // onHorizontalDragStart: (details) {
+        //   print('here onHorizontalDragStart ${details}');
+        // },
+        // onHorizontalDragEnd: (details) {
+        //   print('here onHorizontalDragEnd ${details}');
+        // },
+        onHorizontalDragStart: (details) {
+          _startExecuting();
+        },
+        onHorizontalDragEnd: (details) {
+          _stopExecuting();
+        },
         onHorizontalDragUpdate: widget.showHead
             ? (details) {
+                print('here onHorizontalDragUpdate $details');
+                _globalPosition = details.globalPosition.dx;
+                widget.onHorizontalDragUpdate?.call(details);
+
                 setState(() {
                   _left += details.delta.dx;
                   widget.onPositionChanged(_left);
@@ -86,5 +133,11 @@ class _CursorHandleState extends State<CursorHandle> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }
