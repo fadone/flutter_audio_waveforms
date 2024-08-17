@@ -265,6 +265,15 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
               );
             },
           ),
+        Positioned(
+          left: 0,
+          bottom: 0,
+          child: Container(
+            width: widget.width,
+            height: widget.height * 0.3,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          ),
         ..._handles,
         CursorHandle(
           position: activeSamples.length * sampleWidth,
