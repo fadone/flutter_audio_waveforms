@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/src/core/waveform_painters_ab.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/polygon_waveform/polygon_waveform.dart';
+import 'package:touchable/touchable.dart';
 
 ///InActiveWaveformPainter for the [PolygonWaveform]
 class CurvedPolygonActiveInActiveWaveformPainter
@@ -16,6 +17,8 @@ class CurvedPolygonActiveInActiveWaveformPainter
     required super.activeColor,
     required super.strokeWidth,
     required super.style,
+    required super.context,
+    super.onTapDown,
   });
 
   @override
@@ -80,5 +83,15 @@ class CurvedPolygonActiveInActiveWaveformPainter
     final shiftedPath = path.shift(Offset(0, alignPosition));
 
     canvas.drawPath(shiftedPath, paint);
+
+    TouchyCanvas(context, canvas).drawRect(
+      Rect.fromCenter(
+        center: size.center(Offset.zero),
+        width: size.width,
+        height: size.height,
+      ),
+      Paint()..color = Colors.transparent,
+      onTapDown: onTapDown,
+    );
   }
 }

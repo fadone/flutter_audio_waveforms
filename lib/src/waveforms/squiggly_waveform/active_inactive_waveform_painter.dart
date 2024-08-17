@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/src/core/waveform_painters_ab.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/squiggly_waveform/squiggly_waveform.dart';
+import 'package:touchable/touchable.dart';
 
 ///Painter for the [SquigglyWaveform]
 /// Handles Painting both InActive and Active Waveforms.
@@ -19,6 +20,8 @@ class SquigglyWaveformPainter extends ActiveInActiveWaveformPainter {
     required super.strokeWidth,
     required this.absolute,
     required this.invert,
+    required super.context,
+    super.onTapDown,
   });
 
   ///Whether to draw the absolute waveform or not
@@ -57,6 +60,16 @@ class SquigglyWaveformPainter extends ActiveInActiveWaveformPainter {
     final shiftedPath = waveformPath.shift(Offset(0, alignPosition));
 
     canvas.drawPath(shiftedPath, paint);
+
+    TouchyCanvas(context, canvas).drawRect(
+      Rect.fromCenter(
+        center: size.center(Offset.zero),
+        width: size.width,
+        height: size.height,
+      ),
+      Paint()..color = Colors.transparent,
+      onTapDown: onTapDown,
+    );
   }
 
   /// Draws the default waveform

@@ -65,12 +65,12 @@ class _CursorHandleState extends State<CursorHandle> {
 
   @override
   void didUpdateWidget(covariant CursorHandle oldWidget) {
-    if (widget.isPlaying) {
-      if (widget.position != oldWidget.position) {
-        // print('here changed');
-        _left = widget.position;
-      }
+    // if (widget.isPlaying) {
+    if (widget.position != oldWidget.position) {
+      // print('here changed');
+      _left = widget.position;
     }
+    // }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -94,24 +94,24 @@ class _CursorHandleState extends State<CursorHandle> {
         // onHorizontalDragEnd: (details) {
         //   print('here onHorizontalDragEnd ${details}');
         // },
-        onHorizontalDragStart: (details) {
-          _startExecuting();
-        },
-        onHorizontalDragEnd: (details) {
-          _stopExecuting();
-        },
-        onHorizontalDragUpdate: widget.showHead
-            ? (details) {
-                print('here onHorizontalDragUpdate $details');
-                _globalPosition = details.globalPosition.dx;
-                widget.onHorizontalDragUpdate?.call(details);
+        // onHorizontalDragStart: (details) {
+        //   _startExecuting();
+        // },
+        // onHorizontalDragEnd: (details) {
+        //   _stopExecuting();
+        // },
+        // onHorizontalDragUpdate: widget.showHead
+        //     ? (details) {
+        //         print('here onHorizontalDragUpdate $details');
+        //         _globalPosition = details.globalPosition.dx;
+        //         widget.onHorizontalDragUpdate?.call(details);
 
-                setState(() {
-                  _left += details.delta.dx;
-                  widget.onPositionChanged(_left);
-                });
-              }
-            : null,
+        //         setState(() {
+        //           _left += details.delta.dx;
+        //           widget.onPositionChanged(_left);
+        //         });
+        //       }
+        //     : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

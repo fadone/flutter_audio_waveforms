@@ -38,7 +38,6 @@ class PolygonWaveform extends AudioWaveform {
     super.showActiveWaveform = true,
     super.absolute = false,
     super.invert = false,
-    this.onTapDown,
     this.cursor = false,
     this.cursorWidth = 2.0,
     this.cursorColor = Colors.yellow,
@@ -51,6 +50,7 @@ class PolygonWaveform extends AudioWaveform {
     this.onSelectedDurationChanged,
     this.onHighlightedDurationChanged,
     this.isPlaying = false,
+    super.onTapDown,
   });
 
   /// active waveform color
@@ -67,9 +67,6 @@ class PolygonWaveform extends AudioWaveform {
 
   /// waveform style
   final PaintingStyle style;
-
-  /// onTapDown which receives duration
-  final Function(Duration duration)? onTapDown;
 
   /// Whether to show cursor or not
   final bool cursor;
@@ -232,8 +229,8 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
         if (showActiveWaveform)
           CanvasTouchDetector(
             gesturesToOverride: const [
-              // GestureType.onTapDown,
-              GestureType.onDoubleTapDown,
+              GestureType.onTapDown,
+              // GestureType.onDoubleTapDown,
             ],
             builder: (context) {
               return CustomPaint(
@@ -261,6 +258,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   selectedDurationColor: widget.selectedDurationColor,
                   selectedDuration: _selectedDuration,
                   onSelectedDurationChanged: _onSelectedDurationChanged,
+                  onTapDown: onTapDown,
                 ),
               );
             },
@@ -273,7 +271,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             height: widget.height * 0.3,
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
-          ),
+        ),
         ..._handles,
         CursorHandle(
           position: activeSamples.length * sampleWidth,

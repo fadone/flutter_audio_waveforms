@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/src/core/audio_waveform.dart';
 import 'package:flutter_audio_waveforms/src/core/waveform_painters_ab.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/curved_polygon_waveform/active_inactive_waveform_painter.dart';
+import 'package:touchable/touchable.dart';
 
 /// [CurvedPolygonWaveform] paints a squiggly waveform.
 /// The painter for this waveform is of the type [ActiveInActiveWaveformPainter]
@@ -34,6 +35,7 @@ class CurvedPolygonWaveform extends AudioWaveform {
     super.showActiveWaveform = true,
     super.absolute = false,
     super.invert = false,
+    super.onTapDown,
   }) : assert(strokeWidth >= 0, "strokeWidth can't be negative.");
 
   /// The color of the active portion of the waveform.
@@ -63,18 +65,23 @@ class _SquigglyWaveformState extends AudioWaveformState<CurvedPolygonWaveform> {
     final activeRatio = this.activeRatio;
     final waveformAlignment = this.waveformAlignment;
 
-    return CustomPaint(
-      size: Size(widget.width, widget.height),
-      isComplex: true,
-      painter: CurvedPolygonActiveInActiveWaveformPainter(
-        samples: processedSamples,
-        activeColor: widget.activeColor,
-        inactiveColor: widget.inactiveColor,
-        activeRatio: activeRatio,
-        waveformAlignment: waveformAlignment,
-        strokeWidth: widget.strokeWidth,
-        sampleWidth: sampleWidth,
-        style: widget.style,
+    return CanvasTouchDetector(
+      gesturesToOverride: const [GestureType.onTapDown],
+      builder: (context) => CustomPaint(
+        size: Size(widget.width, widget.height),
+        isComplex: true,
+        painter: CurvedPolygonActiveInActiveWaveformPainter(
+          samples: processedSamples,
+          activeColor: widget.activeColor,
+          inactiveColor: widget.inactiveColor,
+          activeRatio: activeRatio,
+          waveformAlignment: waveformAlignment,
+          strokeWidth: widget.strokeWidth,
+          sampleWidth: sampleWidth,
+          style: widget.style,
+          context: context,
+          onTapDown: onTapDown,
+        ),
       ),
     );
   }

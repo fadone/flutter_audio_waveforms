@@ -15,7 +15,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required super.waveformAlignment,
     required super.style,
     required super.sampleWidth,
-    required this.context,
     // this.onTapDown,
     // required this.cursor,
     // required this.cursorWidth,
@@ -30,10 +29,9 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     this.onSelectedDurationChanged,
     required this.selectedHighlightColor,
     required this.selectedDurationColor,
+    required super.context,
+    super.onTapDown,
   });
-
-  /// BuildContext
-  final BuildContext context;
 
   // /// onTap Function
   // final Function(Duration duration)? onTapDown;
@@ -152,6 +150,8 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     final shiftedPath = path.shift(Offset(0, alignPosition));
 
     canvas.drawPath(shiftedPath, continousActivePaint);
+
+    print('drawing');
   }
 
   void _drawSelectedPath(Canvas canvas, Size size) {
@@ -229,6 +229,16 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     if (selectedDuration != null) {
       _drawSelectedPath(canvas, size);
     }
+
+    TouchyCanvas(context, canvas).drawRect(
+      Rect.fromCenter(
+        center: size.center(Offset.zero),
+        width: size.width,
+        height: size.height,
+      ),
+      Paint()..color = Colors.transparent,
+      onTapDown: onTapDown,
+    );
 
     // touchyCanvas.drawRect(
     //   Rect.fromCenter(
