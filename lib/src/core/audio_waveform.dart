@@ -38,6 +38,7 @@ abstract class AudioWaveform extends StatefulWidget {
     this.absolute = false,
     this.invert = false,
     this.onTapDown,
+    this.onTapUp,
   })  : assert(
           debugMaxandElapsedDuration(
             maxDuration,
@@ -96,6 +97,8 @@ abstract class AudioWaveform extends StatefulWidget {
   final bool showActiveWaveform;
 
   final Function(Duration duration)? onTapDown;
+
+  final Function(Duration duration)? onTapUp;
 
   /// Alignment of the waveform in the canvas.
   @protected
@@ -292,5 +295,19 @@ abstract class AudioWaveformState<T extends AudioWaveform> extends State<T> {
     );
 
     widget.onTapDown?.call(duration);
+  }
+
+  void onTapUp(TapUpDetails details) {
+    print('onTapUp called');
+    final dx = details.localPosition.dx;
+    final index = (dx / sampleWidth).round();
+
+    final ratio = index / widget.samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    widget.onTapUp?.call(duration);
   }
 }

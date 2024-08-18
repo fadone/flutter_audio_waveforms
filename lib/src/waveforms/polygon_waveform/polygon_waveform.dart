@@ -51,6 +51,7 @@ class PolygonWaveform extends AudioWaveform {
     this.onHighlightedDurationChanged,
     this.isPlaying = false,
     super.onTapDown,
+    super.onTapUp,
   });
 
   /// active waveform color
@@ -229,8 +230,8 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
         if (showActiveWaveform)
           CanvasTouchDetector(
             gesturesToOverride: const [
-              GestureType.onTapDown,
-              // GestureType.onDoubleTapDown,
+              GestureType.onTapUp,
+              GestureType.onLongPressStart,
             ],
             builder: (context) {
               return CustomPaint(
@@ -259,6 +260,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   selectedDuration: _selectedDuration,
                   onSelectedDurationChanged: _onSelectedDurationChanged,
                   onTapDown: onTapDown,
+                  onTapUp: onTapUp,
                 ),
               );
             },

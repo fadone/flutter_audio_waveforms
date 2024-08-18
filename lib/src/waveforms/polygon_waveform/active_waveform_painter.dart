@@ -31,19 +31,8 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required this.selectedDurationColor,
     required super.context,
     super.onTapDown,
+    super.onTapUp,
   });
-
-  // /// onTap Function
-  // final Function(Duration duration)? onTapDown;
-
-  // /// Whether to show cursor or not
-  // final bool cursor;
-
-  // /// Cursor width
-  // final double cursorWidth;
-
-  // /// Cursor color
-  // final Color cursorColor;
 
   /// Max Duration
   final Duration? maxDuration;
@@ -112,7 +101,10 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
         ..color = selectedDuration == index
             ? selectedHighlightColor.withOpacity(0.3)
             : highlightDurationColor.withOpacity(0.3),
-      onDoubleTapDown: (details) {
+      // onDoubleTapDown: (details) {
+      //   onSelectedDurationChanged?.call(index);
+      // },
+      onLongPressStart: (details) {
         onSelectedDurationChanged?.call(index);
       },
     );
@@ -237,18 +229,8 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
         height: size.height,
       ),
       Paint()..color = Colors.transparent,
-      onTapDown: onTapDown,
+      // onTapDown: onTapDown,
+      onTapUp: onTapUp,
     );
-
-    // touchyCanvas.drawRect(
-    //   Rect.fromCenter(
-    //     center: newSize.center(Offset.zero),
-    //     width: newSize.width,
-    //     height: newSize.height,
-    //   ),
-    //   Paint()..color = Colors.transparent,
-    //   hitTestBehavior: HitTestBehavior.translucent,
-    //   onTapDown: _onTapDown,
-    // );
   }
 }
