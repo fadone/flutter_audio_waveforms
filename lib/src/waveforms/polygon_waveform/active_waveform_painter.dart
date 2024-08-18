@@ -15,10 +15,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required super.waveformAlignment,
     required super.style,
     required super.sampleWidth,
-    // this.onTapDown,
-    // required this.cursor,
-    // required this.cursorWidth,
-    // required this.cursorColor,
     super.highlightedDurations,
     this.maxDuration,
     required super.samples,
@@ -69,18 +65,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     return durationIndex;
   }
 
-  Duration _calculateDuration(double position) {
-    final index = (position / sampleWidth).round();
-
-    final ratio = index / samples.length;
-
-    final duration = Duration(
-      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
-    );
-
-    return duration;
-  }
-
   void _highlightDuration(
     DurationSegment duration,
     int index,
@@ -108,42 +92,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
         onSelectedDurationChanged?.call(index);
       },
     );
-  }
-
-  void _drawPath(Canvas canvas, Size size) {
-    final continousActivePaint = Paint()
-      ..style = style
-      ..color = color
-      ..shader = gradient?.createShader(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-      );
-
-    final path = Path();
-    final isStroked = style == PaintingStyle.stroke;
-
-    for (var i = 0; i < activeSamples.length; i++) {
-      final x = sampleWidth * i;
-      final y = activeSamples[i];
-      if (isStroked) {
-        path.lineTo(x, y);
-      } else {
-        if (i == activeSamples.length - 1) {
-          path.lineTo(x, 0);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-    }
-
-    //Gets the [alignPosition] depending on [waveformAlignment]
-    final alignPosition = waveformAlignment.getAlignPosition(size.height);
-
-    //Shifts the path along y-axis by amount of [alignPosition]
-    final shiftedPath = path.shift(Offset(0, alignPosition));
-
-    canvas.drawPath(shiftedPath, continousActivePaint);
-
-    print('drawing');
   }
 
   void _drawSelectedPath(Canvas canvas, Size size) {
@@ -180,21 +128,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     canvas.drawPath(shiftedPath, paint);
   }
 
-  // void _drawCursor(TouchyCanvas touchyCanvas, Size size) {
-  //   final centerX = sampleWidth * (activeSamples.length - 1);
-
-  //   final alignPosition = waveformAlignment.getAlignPosition(size.height);
-
-  //   touchyCanvas.drawRect(
-  //     Rect.fromCenter(
-  //       center: Offset(centerX, alignPosition),
-  //       width: cursorWidth,
-  //       height: size.height,
-  //     ),
-  //     Paint()..color = cursorColor,
-  //   );
-  // }
-
   @override
   void paint(Canvas canvas, Size size) {
     final touchyCanvas = TouchyCanvas(context, canvas);
@@ -211,12 +144,6 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
         );
       }
     }
-
-    // if (!cursor) {
-    // _drawPath(canvas, size);
-    // } else {
-    //   _drawCursor(touchyCanvas, newSize);
-    // }
 
     if (selectedDuration != null) {
       _drawSelectedPath(canvas, size);
