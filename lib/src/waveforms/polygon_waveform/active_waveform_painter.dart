@@ -21,7 +21,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required this.highlightDurationColor,
     required this.startHighlightColor,
     required this.endHighlightColor,
-    super.selectedDuration,
+    this.selectedDuration,
     this.onSelectedDurationChanged,
     required this.selectedHighlightColor,
     required this.selectedDurationColor,
@@ -48,8 +48,10 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   /// Selected Duration color
   final Color selectedDurationColor;
 
+  final int? selectedDuration;
+
   /// on Selected Duration Index Changed
-  final Function(int index)? onSelectedDurationChanged;
+  final Function(int? index)? onSelectedDurationChanged;
 
   // void _onTapDown(TapDownDetails details) {
   //   final duration = _calculateDuration(details.localPosition.dx);
@@ -89,7 +91,11 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
       //   onSelectedDurationChanged?.call(index);
       // },
       onLongPressStart: (details) {
-        onSelectedDurationChanged?.call(index);
+        if (selectedDuration == index) {
+          onSelectedDurationChanged?.call(null);
+        } else {
+          onSelectedDurationChanged?.call(index);
+        }
       },
     );
   }

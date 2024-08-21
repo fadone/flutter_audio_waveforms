@@ -60,7 +60,6 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
     PaintingStyle style = PaintingStyle.stroke,
     this.borderWidth = 0.0,
     this.borderColor = opaqueBlack,
-    this.selectedDuration,
     this.highlightedDurations,
     required this.context,
     this.onTapDown,
@@ -83,9 +82,6 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
   /// Stroke/Border Width
   final Color borderColor;
 
-  /// Selected Duration Index
-  final int? selectedDuration;
-
   /// Highlighted Durations
   final List<DurationSegment>? highlightedDurations;
 
@@ -105,7 +101,6 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
         sampleWidth != oldDelegate.sampleWidth ||
         style != oldDelegate.style ||
         borderWidth != oldDelegate.borderWidth ||
-        selectedDuration != oldDelegate.selectedDuration ||
         highlightedDurations != oldDelegate.highlightedDurations ||
         borderColor != oldDelegate.borderColor;
   }

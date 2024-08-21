@@ -47,6 +47,7 @@ class PolygonWaveform extends AudioWaveform {
     this.endHighlightColor = Colors.red,
     this.selectedHighlightColor = Colors.red,
     this.selectedDurationColor = Colors.white,
+    this.selectedDuration,
     this.onSelectedDurationChanged,
     this.onHighlightedDurationChanged,
     this.isPlaying = false,
@@ -96,6 +97,8 @@ class PolygonWaveform extends AudioWaveform {
   /// Selected Duration color
   final Color selectedDurationColor;
 
+  final int? selectedDuration;
+
   /// Selected Duration Changed
   final Function(int? index)? onSelectedDurationChanged;
 
@@ -110,14 +113,12 @@ class PolygonWaveform extends AudioWaveform {
 }
 
 class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
-  int? _selectedDuration;
-
-  void _onSelectedDurationChanged(int index) {
-    setState(() {
-      _selectedDuration = _selectedDuration != index ? index : null;
-      widget.onSelectedDurationChanged?.call(_selectedDuration);
-    });
-  }
+  // void _onSelectedDurationChanged(int index) {
+  //   setState(() {
+  //     _selectedDuration = _selectedDuration != index ? index : null;
+  //     widget.onSelectedDurationChanged?.call(_selectedDuration);
+  //   });
+  // }
 
   double _getIndex(Duration duration) {
     if (maxDuration == null) {
@@ -152,7 +153,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
       final endPosition = _getIndex(duration.end);
 
       var showHead = false;
-      if (_selectedDuration != null && _selectedDuration == i) {
+      if (widget.selectedDuration != null && widget.selectedDuration == i) {
         showHead = true;
       }
 
@@ -253,8 +254,8 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
                   endHighlightColor: widget.endHighlightColor,
                   selectedHighlightColor: widget.selectedHighlightColor,
                   selectedDurationColor: widget.selectedDurationColor,
-                  selectedDuration: _selectedDuration,
-                  onSelectedDurationChanged: _onSelectedDurationChanged,
+                  selectedDuration: widget.selectedDuration,
+                  onSelectedDurationChanged: widget.onSelectedDurationChanged,
                   onTapDown: onTapDown,
                   onTapUp: onTapUp,
                 ),
