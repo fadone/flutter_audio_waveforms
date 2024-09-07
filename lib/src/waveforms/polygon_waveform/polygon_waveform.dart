@@ -50,7 +50,6 @@ class PolygonWaveform extends AudioWaveform {
     this.selectedDuration,
     this.onSelectedDurationChanged,
     this.onHighlightedDurationChanged,
-    this.isPlaying = false,
     super.onTapDown,
     super.onTapUp,
   });
@@ -105,8 +104,6 @@ class PolygonWaveform extends AudioWaveform {
   /// onHighlightedDurationChanged
   final Function(int index, DurationSegment duration)?
       onHighlightedDurationChanged;
-
-  final bool isPlaying;
 
   @override
   AudioWaveformState<PolygonWaveform> createState() => _PolygonWaveformState();
@@ -277,12 +274,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
           cursorWidth: widget.cursorWidth,
           height: widget.height,
           color: widget.cursorColor,
-          onPositionChanged: (position) {
-            final duration = _calculateDuration(position);
-            widget.onTapDown?.call(duration);
-          },
           showHead: true,
-          isPlaying: widget.isPlaying,
         ),
       ],
     );
