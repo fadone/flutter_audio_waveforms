@@ -1,41 +1,56 @@
 import 'package:flutter/material.dart';
 
-class CursorHandle extends StatelessWidget {
-  const CursorHandle({
+class CursorHandle extends StatefulWidget {
+  CursorHandle({
     super.key,
     required this.position,
     required this.cursorWidth,
     required this.height,
     required this.color,
     required this.showHead,
+    required this.onPositionChanged,
   });
 
-  final double position;
+  double position;
   final double cursorWidth;
   final double height;
   final Color color;
   final bool showHead;
+  final Function(double position) onPositionChanged;
 
+  @override
+  State<CursorHandle> createState() => _CursorHandleState();
+}
+
+class _CursorHandleState extends State<CursorHandle> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: showHead ? position - cursorWidth : position,
+      left: widget.showHead
+          ? widget.position - widget.cursorWidth
+          : widget.position,
       top: 0,
       child: GestureDetector(
+        onHorizontalDragUpdate: (details) {
+          setState(() {
+            widget.position += details.delta.dx;
+            widget.onPositionChanged(widget.position);
+          });
+        },
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              color: color,
-              width: cursorWidth,
-              height: height * 0.7,
+              color: widget.color,
+              width: widget.cursorWidth,
+              height: widget.height * 0.7,
             ),
-            if (showHead)
+            if (widget.showHead)
               Container(
-                width: cursorWidth * 3,
-                height: cursorWidth * 3,
+                width: widget.cursorWidth * 3,
+                height: widget.cursorWidth * 3,
                 decoration: BoxDecoration(
-                  color: color,
+                  color: widget.color,
                   shape: BoxShape.circle,
                 ),
               ),

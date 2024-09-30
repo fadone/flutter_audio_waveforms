@@ -275,6 +275,20 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
           height: widget.height,
           color: widget.cursorColor,
           showHead: true,
+          onPositionChanged: (position) {
+            // final dx = details.globalPosition.dx;
+            final index = (position / sampleWidth).round();
+
+            final ratio = index / widget.samples.length;
+
+            final duration = Duration(
+              milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+            );
+
+            print('here4 $position, $index, $ratio, $duration');
+
+            widget.onTapUp?.call(duration);
+          },
         ),
       ],
     );
