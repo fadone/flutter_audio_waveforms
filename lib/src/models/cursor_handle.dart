@@ -11,7 +11,7 @@ class CursorHandle extends StatefulWidget {
     required this.onPositionChanged,
   });
 
-  double position;
+  final double position;
   final double cursorWidth;
   final double height;
   final Color color;
@@ -23,18 +23,39 @@ class CursorHandle extends StatefulWidget {
 }
 
 class _CursorHandleState extends State<CursorHandle> {
+  double _position = 0;
+
+  bool _isDragging = false;
+
+  @override
+  void initState() {
+    _position = widget.position;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant CursorHandle oldWidget) {
+    if (!_isDragging) {
+      if (widget.position != oldWidget.position) {
+        print('here changed');
+        _position = widget.position;
+      }
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: widget.showHead
-          ? widget.position - widget.cursorWidth
-          : widget.position,
+      left: widget.showHead ? _position - widget.cursorWidth : _position,
       top: 0,
       child: GestureDetector(
+        onHorizontalDragStart: (details) => _isDragging = true,
+        onHorizontalDragEnd: (details) => _isDragging = false,
         onHorizontalDragUpdate: (details) {
           setState(() {
-            widget.position += details.delta.dx;
-            widget.onPositionChanged(widget.position);
+            _position += details.delta.dx;
+            widget.onPositionChanged(_position);
           });
         },
         child: Column(
