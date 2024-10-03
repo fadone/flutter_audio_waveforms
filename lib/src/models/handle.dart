@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Handle extends StatefulWidget {
@@ -8,6 +9,7 @@ class Handle extends StatefulWidget {
     required this.position,
     required this.cursorWidth,
     required this.height,
+    required this.width,
     required this.color,
     required this.onPositionChanged,
     required this.showHead,
@@ -16,6 +18,7 @@ class Handle extends StatefulWidget {
   final double position;
   final double cursorWidth;
   final double height;
+  final double width;
   final Color color;
   final bool showHead;
   final Function(double position) onPositionChanged;
@@ -46,10 +49,13 @@ class _HandleState extends State<Handle> {
       child: GestureDetector(
         onHorizontalDragUpdate: widget.showHead
             ? (details) {
-                setState(() {
-                  _left += details.delta.dx;
-                  widget.onPositionChanged(_left);
-                });
+                if (_left + details.delta.dx < widget.width) {
+                  setState(() {
+                    _left =
+                        clampDouble(_left + details.delta.dx, 0, widget.width);
+                    widget.onPositionChanged(_left);
+                  });
+                }
               }
             : null,
         child: Column(

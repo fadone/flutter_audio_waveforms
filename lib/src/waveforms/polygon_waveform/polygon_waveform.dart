@@ -161,6 +161,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             position: startPosition,
             cursorWidth: widget.cursorWidth,
             height: widget.height,
+            width: widget.width,
             color: Colors.blue,
             onPositionChanged: (position) {
               setState(() {
@@ -177,6 +178,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             position: endPosition,
             cursorWidth: widget.cursorWidth,
             height: widget.height,
+            width: widget.width,
             color: Colors.red,
             onPositionChanged: (position) {
               setState(() {
@@ -273,6 +275,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
           position: activeSamples.length * sampleWidth,
           cursorWidth: widget.cursorWidth,
           height: widget.height,
+          width: widget.width,
           color: widget.cursorColor,
           showHead: true,
           onPositionChanged: (position) {

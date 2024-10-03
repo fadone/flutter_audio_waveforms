@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class CursorHandle extends StatefulWidget {
@@ -6,6 +8,7 @@ class CursorHandle extends StatefulWidget {
     required this.position,
     required this.cursorWidth,
     required this.height,
+    required this.width,
     required this.color,
     required this.showHead,
     required this.onPositionChanged,
@@ -14,6 +17,7 @@ class CursorHandle extends StatefulWidget {
   final double position;
   final double cursorWidth;
   final double height;
+  final double width;
   final Color color;
   final bool showHead;
   final Function(double position) onPositionChanged;
@@ -35,11 +39,8 @@ class _CursorHandleState extends State<CursorHandle> {
 
   @override
   void didUpdateWidget(covariant CursorHandle oldWidget) {
-    if (!_isDragging) {
-      if (widget.position != oldWidget.position) {
-        print('here changed');
-        _position = widget.position;
-      }
+    if (!_isDragging && widget.position != oldWidget.position) {
+      _position = widget.position;
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -54,7 +55,8 @@ class _CursorHandleState extends State<CursorHandle> {
         onHorizontalDragEnd: (details) => _isDragging = false,
         onHorizontalDragUpdate: (details) {
           setState(() {
-            _position += details.delta.dx;
+            _position =
+                clampDouble(_position + details.delta.dx, 0, widget.width);
             widget.onPositionChanged(_position);
           });
         },
