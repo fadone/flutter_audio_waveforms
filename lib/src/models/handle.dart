@@ -30,10 +30,20 @@ class Handle extends StatefulWidget {
 class _HandleState extends State<Handle> {
   var _left = 0.0;
 
+  bool _isDragging = false;
+
   @override
   void initState() {
     _left = widget.position;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant Handle oldWidget) {
+    if (!_isDragging && widget.position != oldWidget.position) {
+      _left = widget.position;
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -47,6 +57,8 @@ class _HandleState extends State<Handle> {
       left: position,
       top: 0,
       child: GestureDetector(
+        onHorizontalDragStart: (details) => _isDragging = true,
+        onHorizontalDragEnd: (details) => _isDragging = false,
         onHorizontalDragUpdate: widget.showHead
             ? (details) {
                 if (_left + details.delta.dx < widget.width) {
