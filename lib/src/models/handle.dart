@@ -48,6 +48,8 @@ class _HandleState extends State<Handle> {
 
   @override
   Widget build(BuildContext context) {
+    final handleSize = widget.height * 0.08;
+
     var position = max(_left, 0).toDouble();
     if (widget.showHead) {
       position -= widget.cursorWidth;
@@ -76,12 +78,12 @@ class _HandleState extends State<Handle> {
             Container(
               color: widget.color,
               width: widget.cursorWidth,
-              height: widget.height * 0.7,
+              height: widget.height * 0.9,
             ),
             if (widget.showHead)
               Container(
-                width: widget.cursorWidth * 3,
-                height: widget.cursorWidth * 3,
+                width: handleSize,
+                height: handleSize,
                 decoration: BoxDecoration(
                   color: widget.color,
                   shape: BoxShape.circle,

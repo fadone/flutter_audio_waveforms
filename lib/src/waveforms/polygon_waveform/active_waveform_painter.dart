@@ -138,7 +138,7 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
   void paint(Canvas canvas, Size size) {
     final touchyCanvas = TouchyCanvas(context, canvas);
 
-    final newSize = Size(size.width, size.height * 0.7);
+    final newSize = Size(size.width, size.height * 0.9);
 
     if (highlightedDurations != null) {
       for (var i = 0; i < highlightedDurations!.length; i++) {

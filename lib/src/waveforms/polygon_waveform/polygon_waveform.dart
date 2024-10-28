@@ -210,7 +210,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
       children: [
         Container(
           width: widget.width,
-          height: widget.height * 0.7,
+          height: widget.height * 0.9,
           color: Colors.black87,
         ),
         RepaintBoundary(
@@ -266,7 +266,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
           bottom: 0,
           child: Container(
             width: widget.width,
-            height: widget.height * 0.3,
+            height: widget.height * 0.1,
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
         ),
