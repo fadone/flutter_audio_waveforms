@@ -52,7 +52,7 @@ class _HandleState extends State<Handle> {
 
     var position = max(_left, 0).toDouble();
     if (widget.showHead) {
-      position -= widget.cursorWidth;
+      position -= handleSize / 2;
     }
 
     return Positioned(

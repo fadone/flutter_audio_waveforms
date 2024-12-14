@@ -50,7 +50,7 @@ class _CursorHandleState extends State<CursorHandle> {
     final handleSize = widget.height * 0.08;
 
     return Positioned(
-      left: widget.showHead ? _position - widget.cursorWidth : _position,
+      left: widget.showHead ? _position - (handleSize / 2) : _position,
       top: 0,
       child: GestureDetector(
         onHorizontalDragStart: (details) => _isDragging = true,
