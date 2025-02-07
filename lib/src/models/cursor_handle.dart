@@ -31,6 +31,8 @@ class _CursorHandleState extends State<CursorHandle> {
 
   bool _isDragging = false;
 
+  final _leftPadding = 12.0;
+
   @override
   void initState() {
     _position = widget.position;
@@ -50,7 +52,8 @@ class _CursorHandleState extends State<CursorHandle> {
     final handleSize = widget.height * 0.08;
 
     return Positioned(
-      left: widget.showHead ? _position - (handleSize / 2) : _position,
+      left: (widget.showHead ? _position - (handleSize / 2) : _position) -
+          _leftPadding,
       top: 0,
       child: GestureDetector(
         onHorizontalDragStart: (details) => _isDragging = true,
@@ -62,24 +65,27 @@ class _CursorHandleState extends State<CursorHandle> {
             widget.onPositionChanged(_position);
           });
         },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              color: widget.color,
-              width: widget.cursorWidth,
-              height: widget.height * 0.9,
-            ),
-            if (widget.showHead)
+        child: Container(
+          padding: EdgeInsets.only(left: _leftPadding, right: 12, bottom: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Container(
-                width: handleSize,
-                height: handleSize,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  shape: BoxShape.circle,
-                ),
+                color: widget.color,
+                width: widget.cursorWidth,
+                height: widget.height * 0.9,
               ),
-          ],
+              if (widget.showHead)
+                Container(
+                  width: handleSize,
+                  height: handleSize,
+                  decoration: BoxDecoration(
+                    color: widget.color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

@@ -32,6 +32,8 @@ class _HandleState extends State<Handle> {
 
   bool _isDragging = false;
 
+  final _leftPadding = 12.0;
+
   @override
   void initState() {
     _left = widget.position;
@@ -53,6 +55,7 @@ class _HandleState extends State<Handle> {
     var position = max(_left, 0).toDouble();
     if (widget.showHead) {
       position -= handleSize / 2;
+      position -= _leftPadding;
     }
 
     return Positioned(
@@ -72,24 +75,29 @@ class _HandleState extends State<Handle> {
                 }
               }
             : null,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              color: widget.color,
-              width: widget.cursorWidth,
-              height: widget.height * 0.9,
-            ),
-            if (widget.showHead)
+        child: Container(
+          padding: widget.showHead
+              ? EdgeInsets.only(left: _leftPadding, right: 12, bottom: 12)
+              : null,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Container(
-                width: handleSize,
-                height: handleSize,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  shape: BoxShape.circle,
-                ),
+                color: widget.color,
+                width: widget.cursorWidth,
+                height: widget.height * 0.9,
               ),
-          ],
+              if (widget.showHead)
+                Container(
+                  width: handleSize,
+                  height: handleSize,
+                  decoration: BoxDecoration(
+                    color: widget.color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
