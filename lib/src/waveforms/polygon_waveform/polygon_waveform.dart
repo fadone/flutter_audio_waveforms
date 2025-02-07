@@ -270,7 +270,7 @@ class _PolygonWaveformState extends AudioWaveformState<PolygonWaveform> {
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
         ),
-        ..._handles,
+        if (widget.highlightedDurations != null) ..._handles,
         CursorHandle(
           position: activeSamples.length * sampleWidth,
           cursorWidth: widget.cursorWidth,
