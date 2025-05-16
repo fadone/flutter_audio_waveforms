@@ -37,6 +37,7 @@ abstract class AudioWaveform extends StatefulWidget {
     required this.showActiveWaveform,
     this.absolute = false,
     this.invert = false,
+    this.onPositionChanged,
   })  : assert(
           debugMaxandElapsedDuration(
             maxDuration,
@@ -97,6 +98,8 @@ abstract class AudioWaveform extends StatefulWidget {
   /// Alignment of the waveform in the canvas.
   @protected
   final WaveformAlignment waveformAlignment;
+
+  final Function(double index)? onPositionChanged;
 
   @override
   AudioWaveformState<AudioWaveform> createState();
@@ -207,6 +210,7 @@ abstract class AudioWaveformState<T extends AudioWaveform> extends State<T> {
           elapsedDuration!.inMilliseconds / maxDuration!.inMilliseconds;
 
       _activeIndex = (widget.samples.length * elapsedTimeRatio).round();
+      widget.onPositionChanged?.call(_activeIndex * _sampleWidth);
     }
   }
 

@@ -13,7 +13,12 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
     required super.waveformAlignment,
     required super.style,
     required super.sampleWidth,
+    required this.startIndex,
+    required this.endIndex,
   });
+
+  final int startIndex;
+  final int endIndex;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -24,10 +29,10 @@ class PolygonActiveWaveformPainter extends ActiveWaveformPainter {
         Rect.fromLTWH(0, 0, size.width, size.height),
       );
 
-    final path = Path();
+    final path = Path()..moveTo(startIndex * sampleWidth, 0);
     final isStroked = style == PaintingStyle.stroke;
 
-    for (var i = 0; i < activeSamples.length; i++) {
+    for (var i = startIndex; i <= endIndex; i++) {
       final x = sampleWidth * i;
       final y = activeSamples[i];
       if (isStroked) {
