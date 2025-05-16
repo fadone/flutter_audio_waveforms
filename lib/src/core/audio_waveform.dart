@@ -95,6 +95,10 @@ abstract class AudioWaveform extends StatefulWidget {
   /// Whether to show the active waveform or not.
   final bool showActiveWaveform;
 
+  final Function(Duration duration)? onTapDown;
+
+  final Function(Duration duration)? onTapUp;
+
   /// Alignment of the waveform in the canvas.
   @protected
   final WaveformAlignment waveformAlignment;
@@ -280,5 +284,32 @@ abstract class AudioWaveformState<T extends AudioWaveform> extends State<T> {
       processSamples();
       _updateActiveSamples();
     }
+  }
+
+  void onTapDown(TapDownDetails details) {
+    final dx = details.localPosition.dx;
+    final index = (dx / sampleWidth).round();
+
+    final ratio = index / widget.samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    widget.onTapDown?.call(duration);
+  }
+
+  void onTapUp(TapUpDetails details) {
+    print('onTapUp called');
+    final dx = details.localPosition.dx;
+    final index = (dx / sampleWidth).round();
+
+    final ratio = index / widget.samples.length;
+
+    final duration = Duration(
+      milliseconds: (ratio * maxDuration!.inMilliseconds).round(),
+    );
+
+    widget.onTapUp?.call(duration);
   }
 }

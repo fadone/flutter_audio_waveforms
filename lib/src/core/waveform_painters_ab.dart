@@ -3,6 +3,8 @@ import 'package:flutter_audio_waveforms/src/const/colors.dart';
 import 'package:flutter_audio_waveforms/src/util/check_samples_equality.dart';
 import 'package:flutter_audio_waveforms/src/util/waveform_alignment.dart';
 
+import '../models/duration_segment.dart';
+
 /// A Painter class that all the types of Waveform Painters extend to.
 /// The memebers of this class are essential to paint any type of waveform.
 abstract class WaveformPainter extends CustomPainter {
@@ -51,15 +53,19 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
     // redundant to check for [samples] equality and to pass them here.
     // Only if ActiveWaveformPainter depends on samples in future for any
     // reasons, then we should pass them here.
-    // required List<double> samples,
+    required List<double> samples,
     required double sampleWidth,
     required this.activeSamples,
     required WaveformAlignment waveformAlignment,
     PaintingStyle style = PaintingStyle.stroke,
     this.borderWidth = 0.0,
     this.borderColor = opaqueBlack,
+    this.highlightedDurations,
+    required this.context,
+    this.onTapDown,
+    this.onTapUp,
   }) : super(
-          samples: [], //samples,
+          samples: samples, //samples,
           color: color,
           gradient: gradient,
           waveformAlignment: waveformAlignment,
@@ -76,15 +82,26 @@ abstract class ActiveWaveformPainter extends WaveformPainter {
   /// Stroke/Border Width
   final Color borderColor;
 
+  /// Highlighted Durations
+  final List<DurationSegment>? highlightedDurations;
+
+  final BuildContext context;
+
+  final Function(TapDownDetails details)? onTapDown;
+
+  final Function(TapUpDetails details)? onTapUp;
+
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(covariant ActiveWaveformPainter oldDelegate) {
     return !checkforSamplesEquality(activeSamples, oldDelegate.activeSamples) ||
+        !checkforSamplesEquality(samples, oldDelegate.samples) ||
         color != oldDelegate.color ||
         gradient != oldDelegate.gradient ||
         waveformAlignment != oldDelegate.waveformAlignment ||
         sampleWidth != oldDelegate.sampleWidth ||
         style != oldDelegate.style ||
         borderWidth != oldDelegate.borderWidth ||
+        highlightedDurations != oldDelegate.highlightedDurations ||
         borderColor != oldDelegate.borderColor;
   }
 
@@ -157,6 +174,9 @@ abstract class ActiveInActiveWaveformPainter extends WaveformPainter {
     required WaveformAlignment waveformAlignment,
     PaintingStyle style = PaintingStyle.stroke,
     required this.strokeWidth,
+    required this.context,
+    this.onTapDown,
+    this.onTapUp,
   }) : super(
           samples: samples,
           color: inactiveColor,
@@ -177,6 +197,12 @@ abstract class ActiveInActiveWaveformPainter extends WaveformPainter {
 
   /// Stroke Width
   final double strokeWidth;
+
+  final BuildContext context;
+
+  final Function(TapDownDetails details)? onTapDown;
+
+  final Function(TapUpDetails details)? onTapUp;
 
   /// Get shoudlRepaintValue
   bool getShouldRepaintValue(

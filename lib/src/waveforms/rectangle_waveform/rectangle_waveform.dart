@@ -3,6 +3,7 @@ import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:flutter_audio_waveforms/src/core/audio_waveform.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/rectangle_waveform/active_waveform_painter.dart';
 import 'package:flutter_audio_waveforms/src/waveforms/rectangle_waveform/inactive_waveform_painter.dart';
+import 'package:touchable/touchable.dart';
 
 /// [RectangleWaveform] paints a waveform where each sample is represented as
 /// rectangle block. It's inspired by the @soundcloud audio track on web.
@@ -40,6 +41,7 @@ class RectangleWaveform extends AudioWaveform {
     super.invert = false,
     this.isRoundedRectangle = false,
     this.isCentered = false,
+    super.onTapDown,
   }) : assert(
           borderWidth >= 0 && borderWidth <= 1.0,
           'BorderWidth must be between 0 and 1',
@@ -112,19 +114,25 @@ class _RectangleWaveformState extends AudioWaveformState<RectangleWaveform> {
           ),
         ),
         if (showActiveWaveform)
-          CustomPaint(
-            size: Size(widget.width, widget.height),
-            isComplex: true,
-            painter: RectangleActiveWaveformPainter(
-              color: widget.activeColor,
-              activeSamples: activeSamples,
-              gradient: widget.activeGradient,
-              waveformAlignment: waveformAlignment,
-              borderColor: widget.activeBorderColor,
-              borderWidth: widget.borderWidth,
-              sampleWidth: sampleWidth,
-              isRoundedRectangle: widget.isRoundedRectangle,
-              isCentered: widget.isCentered,
+          CanvasTouchDetector(
+            gesturesToOverride: const [GestureType.onTapDown],
+            builder: (context) => CustomPaint(
+              size: Size(widget.width, widget.height),
+              isComplex: true,
+              painter: RectangleActiveWaveformPainter(
+                color: widget.activeColor,
+                activeSamples: activeSamples,
+                gradient: widget.activeGradient,
+                waveformAlignment: waveformAlignment,
+                borderColor: widget.activeBorderColor,
+                borderWidth: widget.borderWidth,
+                sampleWidth: sampleWidth,
+                isRoundedRectangle: widget.isRoundedRectangle,
+                isCentered: widget.isCentered,
+                context: context,
+                onTapDown: onTapDown,
+                samples: widget.samples,
+              ),
             ),
           ),
       ],
